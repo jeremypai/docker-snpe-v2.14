@@ -1,0 +1,90 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Create snpe:v2.14 docker image",
+            "detail": "Create docker image for SNPE-v2.14",
+            "type": "shell",
+            "command": "docker build -t snpe:v2.14 .",
+            "group": "build",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared",
+                "showReuseMessage": true,
+                "clear": false,
+                "close": false
+            },
+            "problemMatcher": [],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            }
+        },
+        {
+            "label": "Run snpe:v2.14 as a container",
+            "detail": "Run docker image as a container",
+            "type": "shell",
+            "command": "docker",
+            "args": [
+                "run",
+                "-dt",
+                "--user",
+                "${input:uid}:${input:gid}",
+                "-v",
+                "/etc/group:/etc/group:ro",
+                "-v",
+                "/etc/passwd:/etc/passwd:ro",
+                "-v",
+                "${workspaceFolder}/android-ndk-r19c:/snpe-v2.14/android-ndk-r19c:ro",
+                "-v",
+                "${workspaceFolder}/snpe-2.14.2.230905:/snpe-v2.14/snpe-2.14.2.230905:ro",
+                "-v",
+                "${workspaceFolder}/scripts:/snpe-v2.14/scripts:ro",
+                "-v",
+                "${input:data}:/snpe-v2.14/data:rw",
+                "--name",
+                "snpe_v2.14",
+                "snpe:v2.14"
+            ],
+            "group": "build",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared",
+                "showReuseMessage": true,
+                "clear": false,
+                "close": false
+            },
+            "options": {
+                "cwd": "${workspaceFolder}"
+            }
+        }
+    ],
+    "inputs": [
+        {
+            "id": "uid",
+            "type": "promptString",
+            "description": "Enter your user ID",
+            "default": "1000",
+            "password": false
+        },
+        {
+            "id": "gid",
+            "type": "promptString",
+            "description": "Enter your group ID",
+            "default": "1000",
+            "password": false
+        },
+        {
+            "id": "data",
+            "type": "promptString",
+            "description": "Enter the folder that contains model and raw images",
+            "default": "${workspaceFolder}/data",
+            "password": false
+        }
+    ]
+}
